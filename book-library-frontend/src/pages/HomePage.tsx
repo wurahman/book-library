@@ -1,11 +1,11 @@
 import React from 'react'
-import DateDisplay from '../components/DateDisplay'
+import BookList from '../components/BookList'
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
     return (
         <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-            <h1 style={{ fontSize: '4em' }}>Hello world!</h1>
-            <DateDisplay />
+            <h1 style={{ fontSize: '4em' }}>Welcome to Hogsworth Library!</h1>
+            <BookList />
         </div>
     )
 }
