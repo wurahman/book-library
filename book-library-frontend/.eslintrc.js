@@ -16,6 +16,7 @@ module.exports = {
         jest: true
     },
     rules: {
+        "react/react-in-jsx-scope": "off",
         '@typescript-eslint/naming-convention': [
             'warn',
             {

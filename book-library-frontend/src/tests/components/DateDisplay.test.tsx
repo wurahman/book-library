@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import DateDisplay from '../../components/DateDisplay'
 
-test('renders current date', () => {
+test('renders current date', async () => {
     render(<DateDisplay />)
-    const timeFormat = screen.getByText(/GMT/i)
-    expect(timeFormat).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByText(/GMT/i)).toBeInTheDocument(), { timeout: 1100 });
+
 })
