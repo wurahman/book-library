@@ -1,21 +1,49 @@
 import '../styles/library.scss'
 
-import { Alert, AlertColor, Container, Snackbar } from '@mui/material'
+import { Alert, AlertColor, Button, Container, Dialog, DialogActions, DialogContent, Fab, Snackbar, Toolbar } from '@mui/material'
 import { Book, BookStatus } from '../types/types.js'
 import React, { useEffect, useState } from 'react'
 
+import { Add as AddIcon } from '@mui/icons-material'
 import BookForm from './BookForm'
 import BookList from './BookList'
 import axios from 'axios'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000'
 const url = new URL('/books', BASE_URL).toString()
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+const AddDialog = ({ open, setOpen, addBook }: { open: boolean; setOpen: Function; addBook: (formData: BookForm) => Promise<boolean> }) => {
+    const theme = useTheme()
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    return (
+        <div>
+            <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
+                <DialogContent>
+                    <BookForm addBook={addBook} />
+                </DialogContent>
+                <DialogActions>
+                    <Button autoFocus onClick={handleClose}>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    )
+}
 
 const Library = () => {
     const [books, setBooks] = useState([] as Book[])
     const [showAlert, setShowAlert] = React.useState(false)
     const [snackbarMessage, setSnackbarMessage] = React.useState('')
     const [severity, setSeverity] = React.useState('success')
+    const [open, setOpen] = React.useState(false)
 
     useEffect(() => {
         loadBookData().then(setBooks)
@@ -100,11 +128,15 @@ const Library = () => {
     return (
         <Container maxWidth="md" className="test">
             <h1>Welcome to Hogwarts Library!</h1>
-            <BookForm addBook={addBook} />
-            <br />
-            <br />
+
             <BookList books={books} deleteBook={deleteBook} toggleBookStatus={toggleStatus} />
 
+            <AddDialog open={open} addBook={addBook} setOpen={setOpen} />
+            <Toolbar sx={{ justifyContent: 'space-between' }}>
+                <Fab sx={{ marginLeft: 'auto' }} size="small" color="primary" aria-label="add" onClick={() => setOpen(true)}>
+                    <AddIcon />
+                </Fab>
+            </Toolbar>
             <Snackbar open={showAlert} autoHideDuration={2500} onClose={handleClose}>
                 <Alert severity={severity as AlertColor} variant="filled" onClose={handleClose}>
                     {snackbarMessage}
