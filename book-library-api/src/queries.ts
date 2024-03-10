@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 
 import db from './database'
+import { validationResult } from 'express-validator'
 
 const getBooks = (req: Request, res: Response): void => {
   const pageStr = req.query.page as string
@@ -13,22 +14,21 @@ const getBooks = (req: Request, res: Response): void => {
   db.all(query, (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message })
+      return
     }
     res.json(rows)
   })
 }
 
 const addBook = (req: Request, res: Response, next: NextFunction): void => {
-  const { title, author } = req.body
-  if (!title || title.length === 0) {
-    res.status(400).json({ error: 'Title cannot be empty' })
-    return
-  }
-  if (!author || author.length === 0) {
-    res.status(400).json({ error: 'Author cannot be empty' })
+  const result = validationResult(req)
+  if (!result.isEmpty()) {
+    res.status(400).json({ error: 'Validation error' })
+    next()
     return
   }
 
+  const { title, author } = req.body
   const status = 'available'
   const query = 'INSERT INTO books (title, author, status) VALUES (?, ?, ?)'
   db.run(query, [title, author, status], function (err) {
@@ -37,6 +37,7 @@ const addBook = (req: Request, res: Response, next: NextFunction): void => {
       next()
     } else {
       res.status(201).json({ id: this.lastID, title, author, status })
+      next()
     }
   })
 }
@@ -48,17 +49,25 @@ const updateBookStatus = (req: Request, res: Response): void => {
   db.run(query, [status, id], function (err) {
     if (err) {
       res.status(500).json({ error: err.message })
+      return
     }
     res.status(200).json({ id, status })
   })
 }
 
 const deleteBook = (req: Request, res: Response): void => {
+  const result = validationResult(req)
+  if (!result.isEmpty()) {
+    res.status(400).json({ error: 'Validation Error' })
+    return
+  }
+
   const { id } = req.params
   const query = 'DELETE FROM books WHERE id = ?'
   db.run(query, id, function (err) {
     if (err) {
       res.status(500).json({ error: err.message })
+      return
     }
     res.status(204).send()
   })

@@ -19,20 +19,26 @@ describe('Books API', () => {
     const newBook = { author: 'John Doe' }
     const response = await request(app).post('/books').send(newBook)
     expect(response.status).toBe(400)
-    expect(response.body).toMatchObject({ error: 'Title cannot be empty' })
+    expect(response.body).toMatchObject({ error: 'Validation error' })
   })
 
   test('POST /books fails on empty author', async () => {
     const newBook = { author: '', title: 'New Book' }
     const response = await request(app).post('/books').send(newBook)
     expect(response.status).toBe(400)
-    expect(response.body).toMatchObject({ error: 'Author cannot be empty' })
+    expect(response.body).toMatchObject({ error: 'Validation error' })
   })
 
   test('DELETE /books/:id deletes a book', async () => {
-    const bookId = 'your-book-id'
+    const bookId = '1'
     const response = await request(app).delete(`/books/${bookId}`)
     expect(response.status).toBe(204)
+  })
+
+  test('DELETE /books/:id should fail on non numeric id', async () => {
+    const bookId = 'incorrect-id'
+    const response = await request(app).delete(`/books/${bookId}`)
+    expect(response.status).toBe(400)
   })
 
   test('PUT /books/:id updates a book status', async () => {

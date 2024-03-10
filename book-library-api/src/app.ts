@@ -1,3 +1,5 @@
+import { body, param } from 'express-validator'
+
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
@@ -17,8 +19,8 @@ app.use(
 
 // Routes
 app.get('/books', queries.getBooks)
-app.post('/books', queries.addBook)
-app.delete('/books/:id', queries.deleteBook)
+app.post('/books', body(['author', 'title']).trim().notEmpty(), queries.addBook)
+app.delete('/books/:id', param('id').isNumeric(), queries.deleteBook)
 app.put('/books/:id', queries.updateBookStatus)
 
 export default app
