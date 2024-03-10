@@ -37,7 +37,7 @@ const BookForm: React.FC<BookFormProps> = ({ addBook }) => {
             setErrors((prevState) => ({ ...prevState, title: 'Title cannot be empty' }))
         }
         if (formData.author === '') {
-            //setErrors((prevState) => ({ ...prevState, author: 'Author cannot be empty' }))
+            setErrors((prevState) => ({ ...prevState, author: 'Author cannot be empty' }))
         }
 
         try {
