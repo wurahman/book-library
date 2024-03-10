@@ -41,3 +41,5 @@ const exitHandler = (signal: any): void => {
 
 process.on('SIGINT', exitHandler)
 process.on('SIGTERM', exitHandler)
+
+export default app
