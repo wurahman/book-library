@@ -54,7 +54,7 @@ const BookForm: React.FC<BookFormProps> = ({ addBook }) => {
     }
 
     return (
-        <Paper className="form-container" elevation={6}>
+        <Paper className="form-container" elevation={0}>
             <form onSubmit={handleSubmit}>
                 <Stack spacing={1} alignItems="center">
                     <h2>Add a new book</h2>
