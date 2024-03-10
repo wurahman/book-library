@@ -1,7 +1,7 @@
 import '../styles/books.scss'
 
 import { Book, BookStatus } from '../types/types.js'
-import { Button, Card, CardActions, CardContent, Grid } from '@mui/material'
+import { Button, Card, CardActions, CardContent, CardHeader, Chip, Grid, Tooltip } from '@mui/material'
 
 import { DeleteForever } from '@mui/icons-material'
 import React from 'react'
@@ -28,27 +28,31 @@ const BookCard: React.FC<BookCardProps> = ({ book, deleteBook, toggleBookStatus:
                     {book.author} {book.year && <span> ({book.year})</span>}
                 </CardContent>
                 <CardActions>
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        className="delete"
-                        onClick={() => toggleStatus(book.id, book.status === 'available' ? 'borrowed' : 'available')}
-                        {...(book.status === 'available' ? { color: 'primary' } : { color: 'secondary' })}
-                    >
-                        {book.status === 'available' ? 'Borrow' : 'Return'}
-                    </Button>
-                    <Button
-                        size="small"
-                        endIcon={<DeleteForever />}
-                        className="delete"
-                        onClick={() => {
-                            if (confirm('Are you sure you want to delete book') === true) {
-                                deleteBook(book.id)
-                            }
-                        }}
-                    >
-                        Delete
-                    </Button>
+                    <Tooltip title={book.status === 'available' ? 'Borrow Book' : 'Return a borrowed book'}>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            className="delete"
+                            onClick={() => toggleStatus(book.id, book.status === 'available' ? 'borrowed' : 'available')}
+                            {...(book.status === 'available' ? { color: 'primary' } : { color: 'secondary' })}
+                        >
+                            {book.status === 'available' ? 'Borrow' : 'Return'}
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <Button
+                            size="small"
+                            endIcon={<DeleteForever />}
+                            className="delete"
+                            onClick={() => {
+                                if (confirm('Are you sure you want to delete book') === true) {
+                                    deleteBook(book.id)
+                                }
+                            }}
+                        >
+                            Delete
+                        </Button>
+                    </Tooltip>
                 </CardActions>
             </Card>
         </Grid>
