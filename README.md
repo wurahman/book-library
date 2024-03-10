@@ -18,6 +18,13 @@ To get started with the Book Library application, follow these steps:
 1. **Clone the Repository**: Clone this repository to your local machine using `git clone https://github.com/wurahman/book-library.git`.
 2. **Navigate to the Directory**: Move into the directory of the cloned repository using `cd book-library`.
 
+### book-library-api
+
+1. Navigate to the `book-library-api` directory.
+2. Install the dependencies by running `npm install`.
+3. Start the API server with `npm start`.
+4. The API server will be running on `http://localhost:4000`.
+
 ### book-library-frontend
 
 1. Navigate to the `book-library-frontend` directory.
@@ -25,12 +32,7 @@ To get started with the Book Library application, follow these steps:
 3. Start the development server with `npm start`.
 4. Open your browser and visit `http://localhost:3000` to access the frontend.
 
-### book-library-api
-
-1. Navigate to the `book-library-api` directory.
-2. Install the dependencies by running `npm install`.
-3. Start the API server with `npm start`.
-4. The API server will be running on `http://localhost:4000`.
+Note: Please run `book-library-api` before running the `book-library-frontend`
 
 ## Technologies Used
 
