@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 
 import db from './database'
 
@@ -13,19 +13,20 @@ const getBooks = (req: Request, res: Response): void => {
   db.all(query, (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message })
-      return
     }
     res.json(rows)
   })
 }
 
-const addBook = (req: Request, res: Response): void => {
+const addBook = (req: Request, res: Response, next: NextFunction): void => {
   const { title, author } = req.body
-  if (title === '') {
+  if (!title || title.length === 0) {
     res.status(400).json({ error: 'Title cannot be empty' })
+    return
   }
-  if (author === '') {
+  if (!author || author.length === 0) {
     res.status(400).json({ error: 'Author cannot be empty' })
+    return
   }
 
   const status = 'available'
@@ -33,8 +34,10 @@ const addBook = (req: Request, res: Response): void => {
   db.run(query, [title, author, status], function (err) {
     if (err) {
       res.status(500).json({ error: err.message })
+      next()
+    } else {
+      res.status(201).json({ id: this.lastID, title, author, status })
     }
-    res.status(201).json({ id: this.lastID, title, author, status })
   })
 }
 
