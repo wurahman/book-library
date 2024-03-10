@@ -1,11 +1,12 @@
 export type Book = {
+    id: number
     title: string
-    isbn: string
     author: string
+    isbn?: string
     year?: number
     cover?: string
-    status: BookStatus
+    status?: BookStatus
     isDeleted: boolean | undefined
 }
 
-export type BookStatus = 'Available' | 'Borrowed'
+export type BookStatus = 'available' | 'borrowed'

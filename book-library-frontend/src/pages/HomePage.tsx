@@ -1,11 +1,15 @@
 import React from 'react'
 import Library from '../components/Library'
+import CssBaseline from '@mui/material/CssBaseline'
 
 const HomePage = () => {
     return (
-        <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-            <Library />
-        </div>
+        <React.Fragment>
+            <CssBaseline />
+            <main>
+                <Library />
+            </main>
+        </React.Fragment>
     )
 }
 
