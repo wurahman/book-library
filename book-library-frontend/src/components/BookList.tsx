@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-import { Card, CardActions, CardContent, Grid, IconButton, Button } from '@mui/material'
-import { DeleteForever, TaskAltOutlined, ArrowCircleLeft } from '@mui/icons-material'
-
-import { Book, BookStatus } from '../types/types.js'
-
 import '../styles/books.scss'
+
+import { ArrowCircleLeft, DeleteForever, TaskAltOutlined } from '@mui/icons-material'
+import { Book, BookStatus } from '../types/types.js'
+import { Button, Card, CardActions, CardContent, Grid, IconButton } from '@mui/material'
+import React, { useState } from 'react'
 
 type BookListProps = {
     books: Book[]
@@ -21,7 +20,7 @@ type BookCardProps = {
 const BookCard: React.FC<BookCardProps> = ({ book, deleteBook, toggleBookStatus: toggleStatus }) => {
     return (
         <Grid item xs={12} sm={6} md={4}>
-            <Card style={{ border: '1px solid red' }}>
+            <Card>
                 <CardContent>
                     <b>{book.title}</b> by {book.author} {book.year && <span> ({book.year})</span>}
                 </CardContent>

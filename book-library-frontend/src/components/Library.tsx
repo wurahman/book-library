@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { Book, BookStatus } from '../types/types.js'
-import BookList from './BookList'
-import BookForm from './BookForm'
-
-import { Alert, Container, Snackbar } from '@mui/material'
-
 import '../styles/library.scss'
+
+import { Alert, AlertColor, Container, Snackbar } from '@mui/material'
+import { Book, BookStatus } from '../types/types.js'
+import React, { useEffect, useState } from 'react'
+
+import BookForm from './BookForm'
+import BookList from './BookList'
 import axios from 'axios'
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000'
@@ -22,14 +22,18 @@ const loadBookData = async () => {
 const Library = () => {
     const [books, setBooks] = useState([] as Book[])
     const [showAlert, setShowAlert] = React.useState(false)
-    const [serverError, setServerError] = React.useState('')
+    const [snackbarMessage, setSnackbarMessage] = React.useState('')
+    const [severity, setSeverity] = React.useState('success')
 
-    /**
-     * hard coded list of books
-     */
     useEffect(() => {
         loadBookData().then(setBooks)
     }, [])
+
+    const alert = (msg: string, severity: AlertColor = 'success') => {
+        setSnackbarMessage(msg)
+        setSeverity(severity)
+        setShowAlert(true)
+    }
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -42,18 +46,16 @@ const Library = () => {
         try {
             const response = await axios.post(url, formData)
             if (response.status === 201) {
-                console.log('Book added', response)
-                setServerError('Book added successfully. ' + response.statusText)
-                setShowAlert(true)
+                alert('Book added successfully.')
                 loadBookData().then(setBooks)
                 return true
             } else {
-                setServerError(`Server Error adding book ${response.status}, ${response.statusText}`)
-                console.log(`>>>  Server Error adding book ${response.status}, ${response.statusText}`)
-                setShowAlert(true)
+                console.log(`Server Error adding book ${response.status}, ${response.statusText}`)
+                alert('Server Error adding book')
                 return false
             }
         } catch (error) {
+            alert('Server Error adding book', 'error')
             throw new Error('Error adding book')
         }
     }
@@ -62,13 +64,11 @@ const Library = () => {
         try {
             const response = await axios.delete(`${url}/${id}`)
             if (response.status === 204) {
-                setServerError('Book deleted successfully. ' + response.statusText)
-                setShowAlert(true)
+                alert('Book deleted successfully.')
                 loadBookData().then(setBooks)
             } else {
-                setServerError(`Server Error adding book ${response.status}, ${response.statusText}`)
-                console.log(`>>>  Server Error adding book ${response.status}, ${response.statusText}`)
-                setShowAlert(true)
+                alert('Server Error deleting book', 'error')
+                console.log(`Server Error deleting book ${response.status}, ${response.statusText}`)
             }
         } catch (error) {
             throw new Error('Error adding book')
@@ -79,15 +79,14 @@ const Library = () => {
         try {
             const response = await axios.put(`${url}/${id}`, { status })
             if (response.status === 200) {
-                setServerError('Book added successfully. ' + response.statusText)
-                setShowAlert(true)
+                alert('Book status updated successfully.')
                 loadBookData().then(setBooks)
             } else {
-                setServerError(`Server Error adding book ${response.status}, ${response.statusText}`)
-                console.log(`>>>  Server Error adding book ${response.status}, ${response.statusText}`)
-                setShowAlert(true)
+                alert('Server Error updating book status', 'error')
+                console.log(`Server Error deleting book ${response.status}, ${response.statusText}`)
             }
         } catch (error) {
+            alert('Server Error updating book status', 'error')
             throw new Error('Error adding book')
         }
     }
@@ -97,14 +96,10 @@ const Library = () => {
             <h1>Welcome to Hogwarts Library!</h1>
             <BookForm addBook={addBook} />
             <BookList books={books} deleteBook={deleteBook} toggleBookStatus={toggleStatus} />
-            <hr />
-            {showAlert && <h4>{showAlert}</h4>}
-            {serverError && <h4>{serverError}</h4>}
-            <hr />
 
-            <Snackbar open={showAlert} autoHideDuration={5000} onClose={handleClose}>
-                <Alert severity="success" variant="filled" onClose={handleClose}>
-                    {serverError}
+            <Snackbar open={showAlert} autoHideDuration={2500} onClose={handleClose}>
+                <Alert severity={severity as AlertColor} variant="filled" onClose={handleClose}>
+                    {snackbarMessage}
                 </Alert>
             </Snackbar>
         </Container>
