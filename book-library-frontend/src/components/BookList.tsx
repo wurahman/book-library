@@ -2,8 +2,9 @@ import '../styles/books.scss'
 
 import { ArrowCircleLeft, DeleteForever, TaskAltOutlined } from '@mui/icons-material'
 import { Book, BookStatus } from '../types/types.js'
-import { Button, Card, CardActions, CardContent, Grid, IconButton } from '@mui/material'
-import React, { useState } from 'react'
+import { Button, Card, CardActions, CardContent, Grid } from '@mui/material'
+
+import React from 'react'
 
 type BookListProps = {
     books: Book[]
@@ -25,12 +26,27 @@ const BookCard: React.FC<BookCardProps> = ({ book, deleteBook, toggleBookStatus:
                     <b>{book.title}</b> by {book.author} {book.year && <span> ({book.year})</span>}
                 </CardContent>
                 <CardActions>
-                    <IconButton className="delete" onClick={() => toggleStatus(book.id, book.status === 'available' ? 'borrowed' : 'available')}>
-                        {book.status === 'available' ? <TaskAltOutlined className="available" /> : <ArrowCircleLeft className="borrowed" />}
-                    </IconButton>
-                    <IconButton className="delete" onClick={() => deleteBook(book.id)}>
-                        <DeleteForever />
-                    </IconButton>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        className="delete"
+                        onClick={() => toggleStatus(book.id, book.status === 'available' ? 'borrowed' : 'available')}
+                        {...(book.status === 'available' ? { color: 'primary' } : { color: 'secondary' })}
+                    >
+                        {book.status === 'available' ? 'Borrow' : 'Return'}
+                    </Button>
+                    <Button
+                        size="small"
+                        endIcon={<DeleteForever />}
+                        className="delete"
+                        onClick={() => {
+                            if (confirm('Are you sure you want to delete book') === true) {
+                                deleteBook(book.id)
+                            }
+                        }}
+                    >
+                        Delete
+                    </Button>
                 </CardActions>
             </Card>
         </Grid>
@@ -38,19 +54,13 @@ const BookCard: React.FC<BookCardProps> = ({ book, deleteBook, toggleBookStatus:
 }
 
 const BookList: React.FC<BookListProps> = ({ books, deleteBook, toggleBookStatus: toggleStatus }) => {
-    const [hideDeleted, setHideDeleted] = useState(true)
-
     return (
         <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-            <Button className="btn" onClick={() => setHideDeleted(!hideDeleted)}>
-                {hideDeleted ? 'Show' : 'Hide'} Deleted
-            </Button>
             {books.length > 0 ? (
                 <Grid container spacing={2}>
-                    {books.map(
-                        (book) =>
-                            (book.isDeleted && hideDeleted) || <BookCard key={book.id} book={book} deleteBook={deleteBook} toggleBookStatus={toggleStatus} />
-                    )}
+                    {books.map((book) => (
+                        <BookCard key={book.id} book={book} deleteBook={deleteBook} toggleBookStatus={toggleStatus} />
+                    ))}
                 </Grid>
             ) : (
                 <h3>Books not found</h3>

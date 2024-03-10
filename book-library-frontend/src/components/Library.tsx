@@ -11,14 +11,6 @@ import axios from 'axios'
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000'
 const url = new URL('/books', BASE_URL).toString()
 
-const loadBookData = async () => {
-    const response = await fetch(url + '?limit=20')
-    if (!response.ok) {
-        throw new Error('API response was not ok')
-    }
-    return response.json()
-}
-
 const Library = () => {
     const [books, setBooks] = useState([] as Book[])
     const [showAlert, setShowAlert] = React.useState(false)
@@ -28,6 +20,20 @@ const Library = () => {
     useEffect(() => {
         loadBookData().then(setBooks)
     }, [])
+
+    const loadBookData = async () => {
+        try {
+            const response = await fetch(url + '?limit=20')
+            if (!response.ok) {
+                throw new Error('API response was not ok')
+            }
+            return response.json()
+        } catch (error) {
+            alert('Error fetching book list from api', 'error')
+            console.error('Error fetching book data', error)
+            return []
+        }
+    }
 
     const alert = (msg: string, severity: AlertColor = 'success') => {
         setSnackbarMessage(msg)
@@ -95,6 +101,8 @@ const Library = () => {
         <Container maxWidth="md" className="test">
             <h1>Welcome to Hogwarts Library!</h1>
             <BookForm addBook={addBook} />
+            <br />
+            <br />
             <BookList books={books} deleteBook={deleteBook} toggleBookStatus={toggleStatus} />
 
             <Snackbar open={showAlert} autoHideDuration={2500} onClose={handleClose}>
